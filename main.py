@@ -36,7 +36,7 @@ async def main():
         colorize=True
     )
 
-    logger.info('现代化网页截图平台启动')
+    logger.info('Web网页截图工具启动')
 
     with open('data/urls.txt', 'r', encoding='utf-8') as f:
         urls = [
