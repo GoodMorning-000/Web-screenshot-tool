@@ -2,7 +2,7 @@ import asyncio
 
 from loguru import logger
 
-from core.screenshot import capture
+from core.screenshot import capture, Color
 
 
 async def process_url(browser_manager, url, semaphore):
@@ -15,14 +15,15 @@ async def process_url(browser_manager, url, semaphore):
             await capture(page, url)
 
         except Exception as e:
-            logger.error(f'{url} 失败: {e}')
+            error_msg = str(e).split('\n')[0][:80] if '\n' in str(e) else str(e)[:80]
+            logger.error(f'{url} - {Color.RED}失败{Color.RESET}: {error_msg}')
 
             with open(
                 'data/failed_urls.txt',
                 'a',
                 encoding='utf-8'
             ) as f:
-                f.write(url + '\n')
+                f.write(f'{url}\n')
 
         finally:
             await page.close()

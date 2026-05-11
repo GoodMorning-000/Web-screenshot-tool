@@ -1,6 +1,7 @@
 import asyncio
 
 from loguru import logger
+from loguru._defaults import LOGURU_FORMAT
 
 from core.browser import BrowserManager
 from core.worker import process_url
@@ -16,11 +17,26 @@ async def main():
     ensure_dir('logs')
     ensure_dir('data')
 
+    logger.remove()
     logger.add(
         'logs/runtime.log',
         rotation='50 MB',
-        retention='7 days'
+        retention='7 days',
+        format='{time:YYYY-MM-DD HH:mm:ss} | {level} | {message}'
     )
+    
+    logger.level("INFO", color="<blue>")
+    logger.level("SUCCESS", color="<green>")
+    logger.level("ERROR", color="<red>")
+    logger.level("WARNING", color="<yellow>")
+    
+    logger.add(
+        sink=print,
+        format='<green>{time:YYYY-MM-DD HH:mm:ss}</green> | {level: <8} | <cyan>{message}</cyan>',
+        colorize=True
+    )
+
+    logger.info('现代化网页截图平台启动')
 
     with open('data/urls.txt', 'r', encoding='utf-8') as f:
         urls = [

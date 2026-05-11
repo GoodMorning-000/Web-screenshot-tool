@@ -9,11 +9,19 @@ from utils.file_utils import sanitize_filename
 from utils.url_utils import normalize_url
 
 
+class Color:
+    YELLOW = '\033[33m'
+    BLUE = '\033[34m'
+    GREEN = '\033[32m'
+    RED = '\033[31m'
+    RESET = '\033[0m'
+
+
 @retry_decorator
 async def capture(page, url):
 
     normalized_url = normalize_url(url)
-    logger.info(f'开始访问: {normalized_url}')
+    logger.info(f'{url} - {Color.YELLOW}开始访问{Color.RESET}')
 
     await page.goto(
         normalized_url,
@@ -27,7 +35,8 @@ async def capture(page, url):
 
     title = await page.title()
 
-    logger.info(f'页面标题: {title}')
+    title_text = title[:50] + '...' if len(title) > 50 else title
+    logger.info(f'{url} - {Color.BLUE}页面标题: {title_text}{Color.RESET}')
 
     filename = sanitize_filename(
         url.replace('https://', '')
@@ -41,4 +50,4 @@ async def capture(page, url):
         full_page=True
     )
 
-    logger.success(f'截图完成: {url}')
+    logger.success(f'{url} - {Color.GREEN}截图完成{Color.RESET}')
